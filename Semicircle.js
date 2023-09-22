@@ -82,6 +82,11 @@
             return this.stopAngle() - (this.stopAngle() - this.startAngle()) / 2;
         },
 
+        setOpenPath: function (openPath) {
+            this.options.openPath = openPath
+            return this.redraw();
+        },
+
         isSemicircle: function () {
             var startAngle = this.options.startAngle,
                 stopAngle = this.options.stopAngle;
@@ -149,11 +154,17 @@
 
             var largeArc = (layer.options.stopAngle - layer.options.startAngle >= 180) ? '1' : '0';
 
-            var d = 'M' + p.x + ',' + p.y +
-                // line to first start point
-                'L' + start.x + ',' + start.y +
-                'A ' + r + ',' + r2 + ',0,' + largeArc + ',1,' + end.x + ',' + end.y +
-                ' z';
+            // Whether to leave it as an open arc or complete the path (looks like pac-man)
+            if (layer.options.openPath) {
+                var d = 'M' + start.x + ',' + start.y +
+                    'A ' + r + ',' + r2 + ',0,' + largeArc + ',1,' + end.x + ',' + end.y
+            } else {
+                var d = 'M' + p.x + ',' + p.y +
+                    // line to first start point
+                    'L' + start.x + ',' + start.y +
+                    'A ' + r + ',' + r2 + ',0,' + largeArc + ',1,' + end.x + ',' + end.y +
+                    ' z';
+            }
 
             this._setPath(layer, d);
         }
